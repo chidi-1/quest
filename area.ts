@@ -12,9 +12,11 @@ export default class Area extends MapObject {
         this.locations = [];
     }
 
-    addLocation(location: Location):void {
-        this.locations.push(location);
-        location.area = this;
+    addLocation(...location:Location[]):void {
+        for (const item in location) {
+            this.locations.push(location[item]);
+            location[item].area = this;
+        }
     }
 }
 

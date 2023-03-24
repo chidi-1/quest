@@ -8,7 +8,9 @@ const ANTARKTIKA = new Area(15,5,5,Landscape.icedesert,'antarktika',3)
 const CAVE_BEAR = new Location(3,3,1,Landscape.cave,'bear',2)
 const CAVE_PENGUIN = new Location(14,6,1,Landscape.cave,'penguin',1)
 
-ARKTIKA.addLocation(CAVE_BEAR)
+const TOWN_1 = new Location(5,6,1, Landscape.town,"Столица",0)
+
+ARKTIKA.addLocation(CAVE_BEAR, TOWN_1)
 ANTARKTIKA.addLocation(CAVE_PENGUIN)
 
 export const AREAS: Array<Area> = [
