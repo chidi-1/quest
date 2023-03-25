@@ -14,6 +14,10 @@ class Item {
     }
 }
 
+// в локации после драки появились предметы
+// добавить параметры в npc на врагов/друзей
+// генерация npc с усановкой параметров враждебности
+
 function generateItem(): Item {
     let properties: ItemPropertyToItem[] = [];
     for (let i = 0; i < Math.ceil(randn_bm(0, 3, 1.5)); i++) {
