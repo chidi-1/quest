@@ -1,9 +1,10 @@
-import ItemProperty, {PROPERTIES} from "./itemProperties";
+import {ItemProperty, PROPERTIES} from "./itemProperties";
 import {randn_bm} from "../utils";
+import {ItemPropertyValue} from "./itemProperties";
 
 interface ItemPropertyToItem {
     property: ItemProperty
-    value: number
+    value: ItemPropertyValue
 }
 
 class Item {
@@ -19,16 +20,24 @@ class Item {
 // генерация npc с усановкой параметров враждебности
 
 function generateItem(): Item {
-    let properties: ItemPropertyToItem[] = [];
-    for (let i = 0; i < Math.ceil(randn_bm(0, 3, 1.5)); i++) {
-        let index = Math.ceil(Math.random() * PROPERTIES.length);
-        properties.push({
-            property: PROPERTIES[index - 1],
-            value: randn_bm(0, 1, 1.5)
-        })
-    }
+    var properties = generateAttributes(PROPERTIES)
     return new Item(properties);
 }
 
+export function generateAttributes(allowedProperties: Array<ItemProperty>,max:number=3): ItemPropertyToItem[] {
+    let properties: ItemPropertyToItem[] = [];
+    for (let i = 0; i < Math.ceil(randn_bm(0, max, 1.5)); i++) {
+        let index = Math.ceil(Math.random() * allowedProperties.length);
+        properties.push({
+            property: allowedProperties[index - 1],
+            value: allowedProperties[index - 1].createValue()
+        })
+    }
+    return properties;
+}
 
-console.log(generateItem())
+
+let item = generateItem();
+for (const property of item.properties) {
+    console.log(`${property.property.name}: ${property.value.asString()}`)
+}
