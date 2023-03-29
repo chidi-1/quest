@@ -1,12 +1,9 @@
 import {WorldAffector} from "../interfaces";
 import {randn_bm} from "../utils";
+import {ItemProperty, ItemPropertyValue, ItemPropertyRender} from "../properties/core";
 import {generateAttributes} from "./itemType";
 
-export abstract class ItemProperty {
-    name: string;
 
-    abstract createValue(): ItemPropertyValue;
-}
 
 class ItemPropertySimple extends ItemProperty {
     constructor(name: string) {
@@ -14,9 +11,9 @@ class ItemPropertySimple extends ItemProperty {
         this.name = name;
     }
 
-    createValue(): ItemPropertyValue {
+    createValue(): ItemPropertyRender {
         let number = randn_bm(0, 1, 1.5);
-        return new NumberPropertyValue(number);
+        return new NumberPropertyRender(number);
     }
 }
 
@@ -29,9 +26,9 @@ class ItemPropertySimpleNamed extends ItemProperty {
         this.namesRange = namesRange;
     }
 
-    createValue(): ItemPropertyValue {
+    createValue(): ItemPropertyRender {
         let number = randn_bm(0, 1, 1.5)
-        return new NumberNamesPropertyValue(number, this.namesRange);
+        return new NumberRangesPropertyRender(number, this.namesRange);
     }
 }
 
@@ -44,15 +41,9 @@ class ItemPropertySimpleRandomNest extends ItemProperty {
         this.nestAttrs = nestAttrs;
     }
 
-    createValue(): ItemPropertyValue {
+    createValue(): ItemPropertyRender {
         var attributes = generateAttributes(this.nestAttrs,1);
-        // let attribute = this.nestAttrs[Math.ceil(Math.random() * this.nestAttrs.length) - 1]
-        // let value = randn_bm(0, 1, 1.5)
-        let text="";
-        for (const attributeValue of attributes) {
-            text+=`${attributeValue.property.name}:${attributeValue.value.asString()};`
-        }
-        return new StringPropertyValue(text);
+        return new NestedPropertyRender(attributes)
     }
 }
 
@@ -65,9 +56,9 @@ class ItemPropertyList extends ItemProperty {
         this.list = list;
     }
 
-    createValue(): ItemPropertyValue {
+    createValue(): ItemPropertyRender {
         let item = this.list[Math.ceil(Math.random() * this.list.length) - 1]
-        return new StringPropertyValue(item);
+        return new StringPropertyRender(item);
     }
 }
 
@@ -75,7 +66,7 @@ class ItemPropertyAccess extends ItemProperty implements WorldAffector {
     doSomething() {
     }
 
-    createValue(): ItemPropertyValue {
+    createValue(): ItemPropertyRender {
         return undefined;
     }
 }
@@ -90,21 +81,11 @@ export const PROPERTIES: Array<ItemProperty> = [
     new ItemPropertySimple('исторический'),
     new ItemPropertySimple('статусный'),
     new ItemPropertySimpleRandomNest('бонус к хар-ке', [power, agility, spirit]),
-    new ItemPropertySimpleRandomNest('бонус к хар-ке', [power, agility, spirit]),
-    new ItemPropertySimpleRandomNest('бонус к хар-ке', [power, agility, spirit]),
-    new ItemPropertySimpleRandomNest('бонус к хар-ке', [power, agility, spirit]),
-    new ItemPropertySimpleRandomNest('бонус к хар-ке', [power, agility, spirit]),
-    new ItemPropertySimpleRandomNest('бонус к хар-ке', [power, agility, spirit]),
     new ItemPropertyList('магическое свойств ', ['блестящий', 'пахнущий ландышем']),
+    new ItemPropertyList('проклятое ', ['меняет пол', 'заикание']),
 ]
 
-//const FUNMAGIC = new ItemPropertySimple('обладающий свойством ');
-
-export abstract class ItemPropertyValue {
-    abstract asString(): string;
-}
-
-class NumberPropertyValue extends ItemPropertyValue {
+class NumberPropertyRender extends ItemPropertyRender {
     number: number;
 
     constructor(number: number) {
@@ -117,7 +98,7 @@ class NumberPropertyValue extends ItemPropertyValue {
     }
 }
 
-class StringPropertyValue extends ItemPropertyValue {
+class StringPropertyRender extends ItemPropertyRender {
     string: string;
 
     constructor(string: string) {
@@ -130,7 +111,7 @@ class StringPropertyValue extends ItemPropertyValue {
     }
 }
 
-class NumberNamesPropertyValue extends ItemPropertyValue {
+class NumberRangesPropertyRender extends ItemPropertyRender {
     number: number;
     names: { [name: number]: string }
 
@@ -146,6 +127,23 @@ class NumberNamesPropertyValue extends ItemPropertyValue {
                 return this.names[namesKey]
             }
         }
+    }
+}
+
+class NestedPropertyRender extends ItemPropertyRender {
+    attributes: ItemPropertyValue[];
+
+    constructor(attribute: ItemPropertyValue[]) {
+        super();
+        this.attributes = attribute;
+    }
+
+    asString(): string {
+        let text="";
+        for (const attributeValue of this.attributes) {
+            text+=`${attributeValue.property.name}:${attributeValue.value.asString()};`
+        }
+        return  text;
     }
 }
 

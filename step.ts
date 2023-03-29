@@ -3,6 +3,7 @@ import {AREAS} from "./map";
 import Location from "./location";
 import EnemyType from "./enemy/enemyType";
 import {ENEMIES} from "./enemy/bestiary";
+import {generateItem} from "./items/itemType";
 
 export abstract class Step {
     abstract description: string;
@@ -20,25 +21,28 @@ export abstract class Step {
 export class StepTravel extends Step {
     description: string;
     static isFirst = true;
-    targetLocation: Location;
-
-    constructor(quest: MainTrashQuest) {
-        super(quest);
-    }
 
     tryGenerateStep(): boolean {
-        let area = AREAS[Math.ceil(Math.random() * AREAS.length) - 1];
-        let newLocation = area.locations[Math.ceil(Math.random() * area.locations.length) - 1];
-        if(this.quest.getCurrentPosition() != newLocation) {
-            this.targetLocation = newLocation;
-            this.description = `встань и иди в ${this.targetLocation.name}`;
-            this.quest.setLocation(this.targetLocation);
-            return true;
+        if(this.quest.tryChangeLocation()){
+            this.description = `встань и иди в ${this.quest.getCurrentLocation().name}`;
+            return true
         }
-        else {
-            return false;
-        }
+        return false;
     }
+}
+
+export class StepTravelWithPickupItem extends Step {
+    description: string;
+    static isFirst = true;
+
+    tryGenerateStep(): boolean {
+        if(this.quest.tryChangeLocation()){
+            let item = generateItem();
+            this.description = `встань и иди в ${this.quest.getCurrentLocation().name} и найди ${item.getTextDescription()}`
+        }
+        return false;
+    }
+
 }
 
 export class StepDialog extends Step {
@@ -65,7 +69,7 @@ export class StepFight extends Step {
     tryGenerateStep(): boolean {
         let allowedEnemies: Array<EnemyType> = [];
         for (const i in ENEMIES) {
-            if(ENEMIES[i].landscape == this.quest.getCurrentPosition().landscape && ENEMIES[i].difficulty <= this.quest.questSettings.questDifficulty){
+            if(ENEMIES[i].landscape == this.quest.getCurrentLocation().landscape && ENEMIES[i].difficulty <= this.quest.questSettings.questDifficulty){
                 allowedEnemies.push(ENEMIES[i])
             }
         }

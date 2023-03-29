@@ -3,6 +3,7 @@ import QuestSettings from "./questSettings";
 const asc = require('prompt-sync')()
 import Location from "./location";
 import {Step} from "./step";
+import {AREAS} from "./map";
 
 export default class MainTrashQuest {
     // get historyTravel(): Array<Location> {
@@ -10,7 +11,7 @@ export default class MainTrashQuest {
     // }
 
     private historyTravel: Array<Location> = [];
-    private currentPosition: Location;
+    private currentLocation: Location;
 
     questSettings: QuestSettings;
     questDescription: string = "";
@@ -21,11 +22,23 @@ export default class MainTrashQuest {
 
     setLocation(location: Location):void {
         this.historyTravel.push(location);
-        this.currentPosition = location;
+        this.currentLocation = location;
     }
 
-    getCurrentPosition(): Location {
-        return this.currentPosition;
+    getCurrentLocation(): Location {
+        return this.currentLocation;
+    }
+
+    tryChangeLocation(): boolean {
+        let area = AREAS[Math.ceil(Math.random() * AREAS.length) - 1]; // айл би бэк // еще раз
+        let location = area.locations[Math.ceil(Math.random() * area.locations.length) - 1];
+        if (location != this.currentLocation) {
+            this.setLocation(location);
+            return true;
+        }
+        else {
+            return  false
+        }
     }
 
     addStepDescription(stepDescription:string): void{

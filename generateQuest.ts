@@ -1,8 +1,8 @@
 import MainTrashQuest from "./mainTrashQuest";
-import {Step, StepDialog, StepFight, StepTravel} from "./step";
+import {Step, StepDialog, StepFight, StepTravel, StepTravelWithPickupItem} from "./step";
 import QuestSettings from "./questSettings";
 
-let steps: Array<any> = [StepTravel, StepDialog, StepFight]
+let steps: Array<any> = [StepTravel, StepTravelWithPickupItem, StepDialog, StepFight]
 let questSettings: QuestSettings = {
     questLength: 5,
     questDifficulty: 1,
