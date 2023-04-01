@@ -1,4 +1,4 @@
-import {randn_bm} from "../utils";
+import {getRandomElement, randn_bm} from "../utils";
 import {ItemProperty, ItemPropertyValue} from "../properties/core";
 import {PROPERTIES} from "./itemProperties";
 
@@ -18,8 +18,8 @@ class Item {
     }
 }
 
-// функция случайного выбора из массива
-// в локации после драки появились предметы
+// функция случайного выбора из массива +
+// в локации после драки появились предметы +
 // добавить параметры в npc на врагов/друзей
 // генерация npc с усановкой параметров враждебности
 
@@ -31,17 +31,16 @@ export function generateItem(): Item {
 export function generateAttributes(allowedProperties: Array<ItemProperty>, max: number = 3): ItemPropertyValue[] {
     let properties: ItemPropertyValue[] = [];
     for (let i = 0; i < Math.ceil(randn_bm(0, max, 1.5)); i++) {
-        let index = Math.ceil(Math.random() * allowedProperties.length);
+        let attribute = getRandomElement(allowedProperties);
         properties.push({
-            property: allowedProperties[index - 1],
-            value: allowedProperties[index - 1].createValue()
+            property: attribute,
+            value: attribute.createValue()
         })
     }
     return properties;
 }
 
-
 let item = generateItem();
 for (const property of item.properties) {
-    console.log(`${property.property.name}: ${property.value.asString()}`)
+    //console.log(`${property.property.name}: ${property.value.asString()}`)
 }

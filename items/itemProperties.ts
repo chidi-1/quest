@@ -1,5 +1,5 @@
 import {WorldAffector} from "../interfaces";
-import {randn_bm} from "../utils";
+import {getRandomElement, randn_bm} from "../utils";
 import {ItemProperty, ItemPropertyValue, ItemPropertyRender} from "../properties/core";
 import {generateAttributes} from "./itemType";
 
@@ -57,7 +57,7 @@ class ItemPropertyList extends ItemProperty {
     }
 
     createValue(): ItemPropertyRender {
-        let item = this.list[Math.ceil(Math.random() * this.list.length) - 1]
+        let item = getRandomElement(this.list);
         return new StringPropertyRender(item);
     }
 }
@@ -71,18 +71,21 @@ class ItemPropertyAccess extends ItemProperty implements WorldAffector {
     }
 }
 
-let power = new ItemPropertySimple("Power")
-let agility = new ItemPropertySimple("Agility")
-let spirit = new ItemPropertySimple("Spirit")
+let strength = new ItemPropertySimpleNamed("Сила", {0.75: "+3", 0.95: "+2", 1: "+1"})
+let agility = new ItemPropertySimpleNamed("Ловкость", {0.75: "+3", 0.95: "+2", 1: "+1"})
+let stamina = new ItemPropertySimpleNamed("Выносливость", {0.75: "+3", 0.95: "+2", 1: "+1"})
+let inellect = new ItemPropertySimpleNamed("Интеллект", {0.75: "+3", 0.95: "+2", 1: "+1"})
+let wisdom = new ItemPropertySimpleNamed("Мудрость", {0.75: "+3", 0.95: "+2", 1: "+1"})
+let charisma = new ItemPropertySimpleNamed("Харизма", {0.75: "+3", 0.95: "+2", 1: "+1"})
 
 export const PROPERTIES: Array<ItemProperty> = [
-    new ItemPropertySimpleNamed('дорогой', {0.5: "дешевый", 0.8: "обычный", 1: "дорогой"}),
-    new ItemPropertySimple('уникальный'),
-    new ItemPropertySimple('исторический'),
-    new ItemPropertySimple('статусный'),
-    new ItemPropertySimpleRandomNest('бонус к хар-ке', [power, agility, spirit]),
-    new ItemPropertyList('магическое свойств ', ['блестящий', 'пахнущий ландышем']),
-    new ItemPropertyList('проклятое ', ['меняет пол', 'заикание']),
+    new ItemPropertySimpleNamed('', {0.75: "дорогой", 0.95: "обычный", 1: "дешевый"}), //дорогой
+    new ItemPropertySimpleNamed('', {0.75: "уникальный", 0.95: "редкий", 1: "обычный"}), //уникальный
+    new ItemPropertySimpleNamed('', {0.75: "древний", 0.95: "старый", 1: "современный"}), //исторический
+    new ItemPropertySimpleNamed('', {0.75: "королевский", 0.95: "купеческий", 1: "крестьянский"}), //статусный
+    new ItemPropertySimpleRandomNest('бонус к хар-ке ', [strength, agility, stamina,inellect,wisdom,charisma]),
+    new ItemPropertyList('магическое свойство: ', ['блестящий', 'пахнущий ландышем']),
+    new ItemPropertyList('проклятое: ', ['меняет пол', 'заикание']),
 ]
 
 class NumberPropertyRender extends ItemPropertyRender {

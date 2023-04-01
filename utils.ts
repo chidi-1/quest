@@ -15,3 +15,8 @@ export function randn_bm(min, max, skew) {
     }
     return num
 }
+
+export function getRandomElement<T>(list:Array<T>): T {
+    let index = Math.ceil(Math.random() * list.length);
+    return list[index-1];
+}

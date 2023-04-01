@@ -1,9 +1,10 @@
 import MainTrashQuest from "./mainTrashQuest";
-import {AREAS} from "./map";
-import Location from "./location";
+import {AREAS} from "./Geo/map";
+import Location from "./Geo/location";
 import EnemyType from "./enemy/enemyType";
 import {ENEMIES} from "./enemy/bestiary";
 import {generateItem} from "./items/itemType";
+import {getRandomElement} from "./utils";
 
 export abstract class Step {
     abstract description: string;
@@ -68,13 +69,18 @@ export class StepFight extends Step {
 
     tryGenerateStep(): boolean {
         let allowedEnemies: Array<EnemyType> = [];
-        for (const i in ENEMIES) {
+        for (let i in ENEMIES) {
             if(ENEMIES[i].landscape == this.quest.getCurrentLocation().landscape && ENEMIES[i].difficulty <= this.quest.questSettings.questDifficulty){
                 allowedEnemies.push(ENEMIES[i])
             }
         }
-        let enemy = allowedEnemies[Math.ceil(Math.random() * allowedEnemies.length) - 1];
-        this.description += enemy.name;
+        let enemy = getRandomElement<EnemyType>(allowedEnemies);
+        let reward = generateItem();
+        let reward_text = ''
+        for (const property of reward.properties) {
+            reward_text += `${property.property.name}${property.value.asString()}, `
+        }
+        this.description += `${enemy.name} (награда ${reward_text.slice(0, -3)})`;
 
         return true;
     }

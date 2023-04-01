@@ -1,5 +1,5 @@
 import EnemyType from "./enemyType";
-import {Landscape} from "../landscape";
+import {Landscape} from "../Geo/landscape";
 import {RewardType} from "./reward";
 
 const WHITE_BEAR = new EnemyType("Белый медведь", 2, Landscape.icedesert, RewardType.organ)

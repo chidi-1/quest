@@ -1,9 +1,10 @@
 import QuestSettings from "./questSettings";
 
 const asc = require('prompt-sync')()
-import Location from "./location";
+import Location from "./Geo/location";
 import {Step} from "./step";
-import {AREAS} from "./map";
+import {AREAS} from "./Geo/map";
+import {getRandomElement} from "./utils";
 
 export default class MainTrashQuest {
     // get historyTravel(): Array<Location> {
@@ -30,8 +31,8 @@ export default class MainTrashQuest {
     }
 
     tryChangeLocation(): boolean {
-        let area = AREAS[Math.ceil(Math.random() * AREAS.length) - 1]; // айл би бэк // еще раз
-        let location = area.locations[Math.ceil(Math.random() * area.locations.length) - 1];
+        let area = getRandomElement(AREAS); // айл би бэк // еще раз
+        let location = getRandomElement(area.locations);
         if (location != this.currentLocation) {
             this.setLocation(location);
             return true;
@@ -49,24 +50,24 @@ export default class MainTrashQuest {
         let chain: Array<Step> = [];
 
         while (chain.length < 1) {
-            let index = Math.ceil(Math.random() * this.questSettings.allowedSteps.length);
-            if (this.questSettings.allowedSteps[index - 1].isFirst) {
-                chain.push(new this.questSettings.allowedSteps[index - 1](this))
+            let step = getRandomElement(this.questSettings.allowedSteps);
+            if (step.isFirst) {
+                chain.push(new step(this))
                 chain[0].tryGenerateStep();
                 this.addStepDescription(chain[0].description)
             }
         }
 
         while (chain.length < this.questSettings.questLength) {
-            let index = Math.ceil(Math.random() * this.questSettings.allowedSteps.length);
+            let index = getRandomElement(this.questSettings.allowedSteps);
 
             if (
-                !this.questSettings.allowedSteps[index - 1].canDouble && (chain[chain.length - 1] instanceof this.questSettings.allowedSteps[index - 1])
+                !index.canDouble && (chain[chain.length - 1] instanceof index)
             ) {
                 continue;
             }
 
-            let step = new this.questSettings.allowedSteps[index - 1](this);
+            let step = new index(this);
 
             if(step.tryGenerateStep()){
                 chain.push(step);
