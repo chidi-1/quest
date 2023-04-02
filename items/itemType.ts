@@ -10,11 +10,12 @@ class Item {
     }
 
     getTextDescription(): string {
-        let  description = "";
+
+        let rendered:string[]=[]
         for (const property of this.properties) {
-            description += `${property.property.name} ${property.value.asString()}`
+            rendered.push(property.property.render.asString(property.property, property.value))
         }
-        return description;
+        return rendered.join(", ");
     }
 }
 
@@ -32,10 +33,13 @@ export function generateAttributes(allowedProperties: Array<ItemProperty>, max: 
     let properties: ItemPropertyValue[] = [];
     for (let i = 0; i < Math.ceil(randn_bm(0, max, 1.5)); i++) {
         let attribute = getRandomElement(allowedProperties);
-        properties.push({
-            property: attribute,
-            value: attribute.createValue()
-        })
+        let no_coincidence = properties.some(element => element.property === attribute)
+        if(!no_coincidence){
+            properties.push({
+                property: attribute,
+                value: attribute.createValue()
+            })
+        }
     }
     return properties;
 }

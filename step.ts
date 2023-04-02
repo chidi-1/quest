@@ -25,7 +25,7 @@ export class StepTravel extends Step {
 
     tryGenerateStep(): boolean {
         if(this.quest.tryChangeLocation()){
-            this.description = `встань и иди в ${this.quest.getCurrentLocation().name}`;
+            this.description = `иди в ${this.quest.getCurrentLocation().name}`;
             return true
         }
         return false;
@@ -39,7 +39,7 @@ export class StepTravelWithPickupItem extends Step {
     tryGenerateStep(): boolean {
         if(this.quest.tryChangeLocation()){
             let item = generateItem();
-            this.description = `встань и иди в ${this.quest.getCurrentLocation().name} и найди ${item.getTextDescription()}`
+            this.description = `иди в ${this.quest.getCurrentLocation().name} и найди ${item.getTextDescription()}`
         }
         return false;
     }
@@ -74,13 +74,11 @@ export class StepFight extends Step {
                 allowedEnemies.push(ENEMIES[i])
             }
         }
+        if(allowedEnemies.length==0) return false;
         let enemy = getRandomElement<EnemyType>(allowedEnemies);
         let reward = generateItem();
-        let reward_text = ''
-        for (const property of reward.properties) {
-            reward_text += `${property.property.name}${property.value.asString()}, `
-        }
-        this.description += `${enemy.name} (награда ${reward_text.slice(0, -3)})`;
+        let reward_text = reward.getTextDescription();
+        this.description += `${enemy.name} (награда ${reward_text})`;
 
         return true;
     }

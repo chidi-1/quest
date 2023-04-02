@@ -31,7 +31,7 @@ export default class MainTrashQuest {
     }
 
     tryChangeLocation(): boolean {
-        let area = getRandomElement(AREAS); // айл би бэк // еще раз
+        let area = getRandomElement(AREAS); // айл би бэк // айл би бэк еще раз
         let location = getRandomElement(area.locations);
         if (location != this.currentLocation) {
             this.setLocation(location);
@@ -43,7 +43,7 @@ export default class MainTrashQuest {
     }
 
     addStepDescription(stepDescription:string): void{
-        this.questDescription += stepDescription;
+        this.questDescription += stepDescription+'\n';
     }
 
     generateQuest () {
@@ -71,7 +71,7 @@ export default class MainTrashQuest {
 
             if(step.tryGenerateStep()){
                 chain.push(step);
-                this.addStepDescription(`, потом ${chain[chain.length-1].description}`)
+                this.addStepDescription(`${chain[chain.length-1].description}`)
             }
         }
     }
